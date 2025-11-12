@@ -1,0 +1,25 @@
+{
+  "name": "paginaide-ales-js",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "wouter": "^2.8.0",
+    "axios": "^1.4.0",
+    "react-hook-form": "^7.45.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "tailwindcss": "^4.1.17",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}

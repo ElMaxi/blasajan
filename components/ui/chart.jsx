@@ -1,0 +1,261 @@
+'use client'
+
+import *'react'
+import *'recharts'
+
+import { cn } from '@/lib/utils'
+
+// Format= { light'', dark'.dark' }
+
+export  theme?; theme)
+}
+
+ config) => {
+  const colorConfig = Object.entries(config).filter(
+    ([, config]) => config.theme || config.color,
+  )
+
+  if (!colorConfig.length) {
+    return null
+  }
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html(THEMES)
+          .map(
+            ([theme, prefix]) => `
+${prefix} [data-chart=${id}] {
+${colorConfig
+  .map(([key, itemConfig]) => {
+    const color =
+      itemConfig.theme?.[theme||
+      itemConfig.color
+    return color ? `  --color-${key}${color};` )
+  .join('\n')}
+}
+`,
+          )
+          .join('\n'),
+      }}
+    />
+  )
+}
+
+const ChartTooltip = RechartsPrimitive.Tooltip
+
+function ChartTooltipContent({
+  active,
+  payload,
+  className,
+  indicator = 'dot',
+  hideLabel = false,
+  hideIndicator = false,
+  label,
+  labelFormatter,
+  labelClassName,
+  formatter,
+  color,
+  nameKey,
+  labelKey,
+}&
+  React.ComponentProps & {
+    hideLabel?'line' | 'dot' | 'dashed'
+    nameKey?) {
+  const { config } = useChart()
+
+  const tooltipLabel = React.useMemo(() => {
+    if (hideLabel || !payload?.length) {
+      return null
+    }
+
+    const [item] = payload
+    const key = `${labelKey || item?.dataKey || item?.name || 'value'}`
+    const itemConfig = getPayloadConfigFromPayload(config, item, key)
+    const value =
+      !labelKey && typeof label === 'string'
+        ? config[label?.label || label
+        (labelFormatter) {
+      return (
+        <div className={cn('font-medium', labelClassName)}>
+          {labelFormatter(value, payload)}
+        </div>
+      )
+    }
+
+    if (!value) {
+      return null
+    }
+
+    return{value}</div>
+  }, [
+    label,
+    labelFormatter,
+    payload,
+    hideLabel,
+    labelClassName,
+    config,
+    labelKey,
+  ])
+
+  if (!active || !payload?.length) {
+    return null
+  }
+
+  const nestLabel = payload.length === 1 && indicator !== 'dot'
+
+  return (
+    <div
+      className={cn(
+        'border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
+        className,
+      )}
+    >
+      {!nestLabel ? tooltipLabel ="grid gap-1.5">
+        {payload.map((item, index) => {
+          const key = `${nameKey || item.name || item.dataKey || 'value'}`
+          const itemConfig = getPayloadConfigFromPayload(config, item, key)
+          const indicatorColor = color || item.payload.fill || item.color
+
+          return (
+            <div
+              key={item.dataKey}
+              className={cn(
+                '[&>svg]-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]-2.5 [&>svg]-2.5',
+                indicator === 'dot' && 'items-center',
+              )}
+            >
+              {formatter && item?.value !== undefined && item.name ? (
+                formatter(item.value, item.name, item, index, item.payload)
+              )(
+                <>
+                  {itemConfig?.icon ? (
+                    <itemConfig.icon />
+                  )(
+                    !hideIndicator && (
+                      <div
+                        className={cn(
+                          'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
+                          {
+                            'h-2.5 w-2.5'=== 'dot',
+                            'w-1'=== 'line',
+                            'w-0 border-[1.5px] border-dashed bg-transparent'=== 'dashed',
+                            'my-0.5'&& indicator === 'dashed',
+                          },
+                        )}
+                        style={
+                          {
+                            '--color-bg''--color-border'/>
+                    )
+                  )}
+                  <div
+                    className={cn(
+                      'flex flex-1 justify-between leading-none',
+                      nestLabel ? 'items-end' 'items-center',
+                    )}
+                  >
+                    <div className="grid gap-1.5">
+                      {nestLabel ? tooltipLabel ="text-muted-foreground">
+                        {itemConfig?.label || item.name}
+                      </span>
+                    </div>
+                    {item.value && (
+                      <span className="text-foreground font-mono font-medium tabular-nums">
+                        {item.value.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+const ChartLegend = RechartsPrimitive.Legend
+
+function ChartLegendContent({
+  className,
+  hideIcon = false,
+  payload,
+  verticalAlign = 'bottom',
+  nameKey,
+}'div'> &
+  Pick & {
+    hideIcon?) {
+  const { config } = useChart()
+
+  if (!payload?.length) {
+    return null
+  }
+
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center gap-4',
+        verticalAlign === 'top' ? 'pb-3' 'pt-3',
+        className,
+      )}
+    >
+      {payload.map((item) => {
+        const key = `${nameKey || item.dataKey || 'value'}`
+        const itemConfig = getPayloadConfigFromPayload(config, item, key)
+
+        return (
+          <div
+            key={item.value}
+            className={
+              '[&>svg]-muted-foreground flex items-center gap-1.5 [&>svg]-3 [&>svg]-3'
+            }
+          >
+            {itemConfig?.icon && !hideIcon ? (
+              <itemConfig.icon />
+            )(
+              <div
+                className="h-2 w-2 shrink-0 rounded-[2px]"
+                style={{
+                  backgroundColor/>
+            )}
+            {itemConfig?.label}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// Helper to extract item config from a payload.
+function getPayloadConfigFromPayload(
+  config) {
+  if (typeof payload !== 'object' || payload === null) {
+    return undefined
+  }
+
+  const payloadPayload =
+    'payload' in payload &&
+    typeof payload.payload === 'object' &&
+    payload.payload !== null
+      ? payload.payload
+      = key
+
+  if (
+    key in payload &&
+    typeof payload[key=== 'string'
+  ) {
+    configLabelKey = payload[key
+  } else if (
+    payloadPayload &&
+    key in payloadPayload &&
+    typeof payloadPayload[key=== 'string'
+  ) {
+    configLabelKey = payloadPayload[
+      key
+    ]
+  }
+
+  return configLabelKey in config
+    ? config[configLabelKey]
+    
